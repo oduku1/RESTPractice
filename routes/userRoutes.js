@@ -1,5 +1,6 @@
 import express from "express";
 import users from "../data/users.js";
+import comments from "../data/comments.js";
 
 const router = express.Router();
 
@@ -70,5 +71,27 @@ router.delete("/:id", (req, res) => {
     res.status(404).json({ error: "User not found" });
   }
 });
+
+
+router.get("/users/:id/comments", (req, res) => {
+    const userId = Number(req.params.id);
+    let userComments = comments.filter(comment => comment.userId === userId);
+  
+    if (userComments.length === 0) {
+      return res.status(404).json({ error: "No comments found for this user id" });
+    }
+  
+    if (req.query.postId) {
+      const postId = Number(req.query.postId);
+      userComments = userComments.filter(comment => comment.postId === postId);
+  
+      if (userComments.length === 0) {
+        return res.status(404).json({ error: "No comments found for this user on the specified post" });
+      }
+    }
+  
+    res.json(userComments);
+  });
+
 
 export default router;

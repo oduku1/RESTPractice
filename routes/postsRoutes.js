@@ -1,5 +1,6 @@
 import express from "express";
 import posts from "../data/posts.js";
+import comments from "../data/comments.js";
 
 const router = express.Router();
 
@@ -87,4 +88,23 @@ router.get("/", (req, res) => {
   res.json(userPosts);
 });
 
+router.get("/:id/comments", (req, res) => {
+  const postId = Number(req.params.id);
+  let postComments = comments.filter(comment => comment.postId === postId);
+
+  // If a userId query param is provided, filter further
+  if (req.query.userId) {
+    const userId = Number(req.query.userId);
+    postComments = postComments.filter(comment => comment.userId === userId);
+  }
+
+  // Handle no matches
+  if (postComments.length === 0) {
+    return res.status(404).json({
+      error: "No comments found for this post (with specified userId if provided)"
+    });
+  }
+
+  res.json(postComments);
+});
 export default router;

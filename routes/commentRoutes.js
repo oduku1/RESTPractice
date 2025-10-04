@@ -36,7 +36,7 @@ router.post("/", (req, res) => {
 router
   .route("/")
   .get((req, res) => {
-    const {userId,postId} = req.query;
+    const {userId,postId,id} = req.query;
 
     if (userId) {
       const userComments = comments.filter(comment => comment.userId === Number(userId));
@@ -46,9 +46,11 @@ router
         const userComments = comments.filter(comment => comment.postId === Number(postId));
         res.json(userComments);
       } 
-
+      if (id) {
+        const userComments = comments.filter(comment => comment.id === Number(id));
+        res.json(userComments);
+      } 
       res.json(comments);
-
   })
 
 router
